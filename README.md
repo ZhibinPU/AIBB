@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🧠 IBB
+# 🧠 AIBB
 
-### Information-Borrowing Bayesian covariance estimation
+### Adaptive Information-Borrowing Bayesian Estimation of High-Dimensional Population-Level Brain Connectivity from Small Samples
 
 **Estimating a population covariance matrix when the number of variables far exceeds the number of samples.**
 
@@ -13,7 +13,7 @@
 </div>
 
 <div align="center">
-  <img src="assets/graphical-abstract.png" width="880" alt="IBB method overview">
+  <img src="assets/graphical-abstract.png" width="880" alt="AIBB method overview">
 </div>
 
 ---
@@ -27,7 +27,7 @@ alternatives fare no better: a full correlation matrix needs $\mathcal{O}(d^2)$
 parameters and an inverse-Wishart prior, which both misbehaves in high dimension
 and costs $\mathcal{O}(d^3)$ per iteration.
 
-**IBB takes a different route.** It treats an empirical **pilot correlation
+**AIBB takes a different route.** It treats an empirical **pilot correlation
 matrix** as a structural template and *borrows* from it — calibrating how much of
 that template to keep, variable by variable, through a single node-wise
 parameter. The parameter count drops from $\mathcal{O}(d^2)$ to $\mathcal{O}(d)$,
@@ -37,13 +37,13 @@ to $\mathcal{O}(n^2d)$.
 | | Parameters | Per-iteration cost | Main obstacle |
 |---|---|---|---|
 | Bayesian separation (BSS) | $\mathcal{O}(d^2)$ | $\mathcal{O}(d^3)$ | too many parameters, slow mixing |
-| **IBB** | $\mathcal{O}(d)$ | $\mathcal{O}(n^2 d)$ | pilot quality |
+| **AIBB** | $\mathcal{O}(d)$ | $\mathcal{O}(n^2 d)$ | pilot quality |
 
 ---
 
 ## 🧮 The model
 
-IBB uses a divide-and-conquer parameterization that separates **marginal
+AIBB uses a divide-and-conquer parameterization that separates **marginal
 variances** from **correlation calibration**, while estimating both jointly:
 
 $$
@@ -142,7 +142,7 @@ R = ibb.reconstruct_corr(samples, X_t, method="mean")
 
 ### 📉 Beyond point estimates
 
-Most shrinkage estimators return a matrix and stop. IBB returns a **posterior
+Most shrinkage estimators return a matrix and stop. AIBB returns a **posterior
 shrinkage map**: for every entry, the posterior probability that it was
 *actively calibrated* rather than left at its pilot value.
 
@@ -239,16 +239,16 @@ singular.
   <img src="assets/fig2-highdim.png" width="820" alt="Estimation accuracy and runtime in the ultra-high-dimensional regime">
 </div>
 
-**IBB achieved the lowest Frobenius and spectral errors across all evaluated
+**AIBB achieved the lowest Frobenius and spectral errors across all evaluated
 structures and dimensions**, with the three methods converging at $n=400$ where
-IBB retains a small advantage. On runtime, IBB was faster than BAG in the
+AIBB retains a small advantage. On runtime, AIBB was faster than BAG in the
 settings evaluated despite being sampling-based; POET was fastest overall,
 trading accuracy for speed.
 
 Entry-wise, the MSE reduction against the sample correlation,
-$\Delta = \mathrm{MSE}^{S} - \mathrm{MSE}^{\text{IBB}}$, was larger on the
+$\Delta = \mathrm{MSE}^{S} - \mathrm{MSE}^{\text{AIBB}}$, was larger on the
 thresholded set $\mathcal{P}$ than on its complement $\mathcal{Q}$ across every
-structure, dimension and sample size examined — IBB corrects precisely the
+structure, dimension and sample size examined — AIBB corrects precisely the
 entries whose empirical correlation needs it most.
 
 Run it yourself:
@@ -263,7 +263,7 @@ python scripts/12_fig2_highdim_lines.py
 
 ## ⚠️ Scope and limitations
 
-IBB is a **structured regularizer, not an edge-selection procedure.** Because
+AIBB is a **structured regularizer, not an edge-selection procedure.** Because
 shrinkage is induced through node-wise effects, the regularization applied to
 entry $(i,j)$ is determined jointly by its two incident nodes and is not fully
 entry-specific. Two consequences worth internalizing before interpreting output:
@@ -287,10 +287,10 @@ parsimony at the price of expressiveness — those are the same coin.
 ## 📚 Citation
 
 ```bibtex
-@article{pu2026ibb,
-  title   = {An information-borrowing Bayesian method for inferring
-             high-dimensional population-level brain connectivity
-             from small samples},
+@article{pu2026aibb,
+  title   = {Adaptive Information-Borrowing Bayesian Estimation of
+             High-Dimensional Population-Level Brain Connectivity
+             from Small Samples},
   author  = {Pu, Zhibin and Zeng, Chenhao and Ge, Shufei},
   journal = {Manuscript},
   year    = {2026}
