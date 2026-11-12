@@ -124,20 +124,20 @@ quadratic form — are rejected rather than aborting the chain.
 
 ```python
 import numpy as np
-import ibb
+import aibb
 
 X = np.random.randn(200, 3000)       # n samples x d variables, d >> n
 
-Sigma = ibb.fit_cov_ibb(X, preset="sim_block_n200")     # (d, d) covariance
-R     = ibb.fit_corr_ibb(X, preset="sim_block_n200")    # (d, d) correlation
+Sigma = aibb.fit_cov_aibb(X, preset="sim_block_n200")     # (d, d) covariance
+R     = aibb.fit_corr_aibb(X, preset="sim_block_n200")    # (d, d) correlation
 ```
 
 One chain, both outputs — so the estimate and its uncertainty come from the same
 posterior:
 
 ```python
-samples, X_t = ibb.run_chain(X, preset="sim_block_n200")
-R = ibb.reconstruct_corr(samples, X_t, method="mean")
+samples, X_t = aibb.run_chain(X, preset="sim_block_n200")
+R = aibb.reconstruct_corr(samples, X_t, method="mean")
 ```
 
 ### 📉 Beyond point estimates
@@ -147,7 +147,7 @@ shrinkage map**: for every entry, the posterior probability that it was
 *actively calibrated* rather than left at its pilot value.
 
 ```python
-shrink = ibb.significant_ibb(X, preset="sim_block_n200", tol=0.05)
+shrink = aibb.significant_aibb(X, preset="sim_block_n200", tol=0.05)
 shrink["posterior_prob_geq"]    # P(|Corr_ij - pilot_ij| > tol) per entry
 shrink["mean_corr"]             # posterior mean correlation
 ```
@@ -157,8 +157,8 @@ shrink["mean_corr"]             # posterior mean correlation
 ## 🔧 Installation
 
 ```bash
-git clone https://github.com/<your-org>/ibb.git
-cd ibb
+git clone https://github.com/<your-org>/aibb.git
+cd aibb
 python -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
 
 pip install -e .
@@ -174,16 +174,16 @@ python scripts/06_simulation_benchmark.py --structure block --n 60 --d 300 --rep
 
 ## 📁 Repository layout
 
-The method is self-contained in `src/ibb/` and depends on nothing
+The method is self-contained in `src/aibb/` and depends on nothing
 domain-specific.
 
 ```
-src/ibb/
+src/aibb/
 ├── model.py        # 🎯 CorrShrinkCovModel — the Woodbury log-posterior
 ├── priors.py       #    half-Cauchy and inverse-gamma log densities
 ├── hmc.py          #    leapfrog HMC sampler
 ├── posterior.py    #    draws -> Sigma, R, and the shrinkage map
-├── api.py          #    fit_cov_ibb / fit_corr_ibb / significant_ibb + HMC_PRESETS
+├── api.py          #    fit_cov_aibb / fit_corr_aibb / significant_aibb + HMC_PRESETS
 ├── stats.py        #    MVN density, BH-FDR, matrix norms
 ├── simulation.py   #    block / banded / Toeplitz covariance generators
 ├── synthetic.py    #    Gaussian and multivariate-t draws from a fitted PPCA
@@ -204,7 +204,7 @@ parameterizations kept for comparison (see `application/scripts/10` and
 ### 🎛️ HMC presets
 
 Step size does **not** transfer across $(n, d)$ regimes. Tuned values live in one
-place — `ibb.api.HMC_PRESETS` — rather than being re-inlined per experiment:
+place — `aibb.api.HMC_PRESETS` — rather than being re-inlined per experiment:
 
 | Preset | samples | burn-in | step size | Tuned for |
 |---|---|---|---|---|
